@@ -60,7 +60,7 @@ describe("android complex", function () {
       .elementById('br.com.mobicare.minhaoi:id/mop_login_phone_edittext').sendKeys('988911758')
       .elementById('br.com.mobicare.minhaoi:id/mop_login_signin_btn').click()
       .waitForElementById('br.com.mobicare.minhaoi:id/action_bar_root').then(function() {
-        return Q.delay(5000).then(function() {
+        return Q.delay(10000).then(function() {
           salvarScreenShot(driver, 'pos_login');
         })
       });
@@ -81,7 +81,6 @@ describe("android complex", function () {
         } else {
           return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn_inside').click().then(function() {
             return Q.delay(5000).then(function() {
-
               function findSlideBar() {
                 return driver
                   .elementsByClassName('android.widget.SeekBar')
@@ -187,55 +186,43 @@ describe("android complex", function () {
           return driver.back().back();
         });
       });
+    });
+  });
+
+  it("Menu Navigation :: Trocar oferta", function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
+      return Q.delay(5000).then(function() {
+        salvarScreenShot(driver, 'trocar_oferta');
+      });
     }).then(function() {
-      return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn').click().then(function(){
+      return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Mudar sua oferta\']').click().then(function() {
         return Q.delay(5000).then(function() {
-          return driver.back();
+          salvarScreenShot(driver, 'mudar_ofeta');
         });
       });
     }).then(function() {
-      return Q.delay(5000).then(function() {
-        return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_mcms_btn').click()
-        .sleep(5000)
-        .back();
-      });
-    });
-  });
-});
-
-it("Menu Navigation :: Trocar oferta", function() {
-  return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
-    return Q.delay(2000).then(function() {
-      salvarScreenShot(driver, 'trocar_oferta');
-    });
-  }).then(function() {
-    return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Mudar sua oferta\']').click().then(function() {
-      return Q.delay(5000).then(function() {
-        salvarScreenShot(driver, 'mudar_ofeta');
-      });
-    });
-  }).then(function() {
-    return driver.elementByXPath('//android.widget.TextView[@text=\'CONTROLE\']').click().then(function() {
-      return Q.delay(5000).then(function() {
-        salvarScreenShot(driver, 'mudar_oferta_controle');
-      });
-    });
-  }).then(function() {
-    return driver.elementByXPath('//android.widget.TextView[@text=\'PRÉ-PAGO\']').click().then(function() {
-      return Q.delay(2000).then(function() {
-        return driver.back();
-      });
-    });
-  });
-});
-
-it("Menu Navigation :: Entenda sua oferta", function() {
-  return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
-    return Q.delay(5000).then(function() {
-      return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Entenda a sua oferta\']').click().then(function() {
+      return driver.elementByXPath('//android.widget.TextView[@text=\'CONTROLE\']').click().then(function() {
         return Q.delay(5000).then(function() {
-          salvarScreenShot(driver, 'entenda_sua_oferta');
-          return driver.back().back();
+          salvarScreenShot(driver, 'mudar_oferta_controle');
+        });
+      });
+    }).then(function() {
+      return driver.elementByXPath('//android.widget.TextView[@text=\'PRÉ-PAGO\']').click().then(function() {
+        return Q.delay(2000).then(function() {
+          return driver.back();
+        });
+      });
+    });
+  });
+
+  it("Menu Navigation :: Entenda sua oferta", function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
+      return Q.delay(5000).then(function() {
+        return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Entenda a sua oferta\']').click().then(function() {
+          return Q.delay(5000).then(function() {
+            salvarScreenShot(driver, 'entenda_sua_oferta');
+            return driver.back().back();
+          });
         });
       });
     });
