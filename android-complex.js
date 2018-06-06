@@ -53,22 +53,17 @@ describe("android complex", function () {
   });
 
   it("Login pré", function () {
-    return driver.sleep(5000)
-      .takeScreenshot().then(function(image){
-        return fs.writeFile('home.png', image, 'base64', function(err){
-          console.log('Erro ao salvar a imagem');
-        })
-      })
+    driver
       .elementById('br.com.mobicare.minhaoi:id/minhaoi_hub_bottom_btn').click()
       .elementById('br.com.mobicare.minhaoi:id/mop_login_ddd_edittext').sendKeys('21')
       .elementById('br.com.mobicare.minhaoi:id/mop_login_phone_edittext').sendKeys('988911758')
       .elementById('br.com.mobicare.minhaoi:id/mop_login_signin_btn').click()
       .sleep(15000)
-      .takeScreenshot().then(function(image){
-        return fs.writeFile('pos_login.png', image, 'base64', function(callback){
-
+      .then(function() {
+        return Q.delay(3000).then(function() {
+          salvarScreenShot(driver, 'pos_login');
         })
-      });
+      })
       //.elementById('br.com.mobicare.minhaoi:id/mop_sms_auth_received_btn').click()
       //.takeScreenshot()
       //.elementById('br.com.mobicare.minhaoi:id/mop_sms_code_code_edittext').sendKeys('')
@@ -94,15 +89,23 @@ describe("android complex", function () {
   });
 
   it("Troca voz-internet", function () {
-    return driver.sleep(5000)
-      .elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn_inside').click()
-      .sleep(1000)
-      .takeScreenshot().then(function(image){
-        return fs.writeFile('troca-voz-internet.png', image, 'base64', function(callback){
+    return driver.sleep(5000).then(function () {
+      if(driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn')) {
+        driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn').click();
+        driver.sleep(5000);
+        if(driver.elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultNegative')) {
+          salvarScreenShot(driver, 'nao_ha_beneficio_disponivel');
+          driver.sleep(5000).elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultNegative').click();
+        } else {
+          driver.back();
+        }
+      } else {
+        driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn_inside').click().sleep(5000);
+        salvarScreenShot(driver, 'troca_voz_internet');
+      }
+    })
 
-        })
-      })
-    });
+  });
 
   // it("should scroll", function () {
   //   return driver
@@ -231,19 +234,32 @@ describe("android complex", function () {
   it("comprar pacotes", function() {
     return driver.sleep(2000)
     .elementByXPath('//android.widget.ImageButton').click()
-    .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
-    .sleep(5000)
-    .takeScreenshot().then(function(image){
-      return fs.writeFile('comprar-pacotes.png', image, 'base64', function(callback) {
-
-      })
+    .sleep(10000).then(function () {
+      if(driver.elementByXPath('//android.widget.TextView[contains(@text, "erro")]')) {
+        driver.sleep(5000);
+        salvarScreenShot(driver, 'erro_compra_pacotes');
+        driver.sleep(5000).back();
+      } else {
+        driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click().sleep(5000);
+        salvarScreenShot(driver, 'comprar_pacotes');
+        driver.sleep(5000);
+      }
     })
+
     //.elementById('br.com.mobicare.minhaoi:id/mop_balance_mcmsbtn_inside').click()
     .elementByXPath('//android.widget.TextView[@text=\'SMS\']').click()
-    .sleep(5000)
-    .elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
-    .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click()
-    .back()
+    .sleep(5000).then(function() {
+      if(driver.elementByXPath('//android.widget.TextView[contains(@text, "erro")]')) {
+        salvarScreenShot(driver, 'erro_compra_pacotes');
+        driver.sleep(5000).back();
+      } else {
+        driver.elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
+        .sleep(5000)
+        .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click()
+        .back();
+      }
+    })
+
     .elementByXPath('//android.widget.TextView[@text=\'VOZ\']').click()
     .sleep(5000)
     .elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
@@ -332,3 +348,15 @@ describe("android complex", function () {
   });
 
 });
+
+function logar(driver) {
+
+}
+
+function salvarScreenShot(driver, nomeArquivo) {
+  driver.takeScreenshot().then(function(image){
+    return fs.writeFile(nomeArquivo + '.png', image, 'base64', function(callback) {
+
+    })
+  })
+}

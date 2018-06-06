@@ -23,7 +23,7 @@ exports.android18 = {
   platformVersion: '6.0',
   deviceName: 'Android Emulator',
   autoGrantPermissions: 'true',
-  app: undefined // will be set later
+  app: undefined
 };
 
 exports.android19 = {
@@ -31,6 +31,16 @@ exports.android19 = {
   'appium-version': '1.6',
   platformName: 'Android',
   platformVersion: '6.0',
+  autoGrantPermissions: 'true',
+  deviceName: 'Android Emulator',
+  app: undefined
+};
+
+exports.android26 = {
+  browserName: '',
+  'appium-version': '1.6',
+  platformName: 'Android',
+  platformVersion: '8.0',
   autoGrantPermissions: 'true',
   deviceName: 'Android Emulator',
   app: undefined // will be set later

@@ -42,7 +42,8 @@
     "android-local-server": "mocha android-local-server.js",
     "selendroid-simple": "mocha selendroid-simple.js",
     "minhaoipos": "mocha minhaoipos.js",
-    "teste": "mocha teste.js"
+    "oimod": "mocha oimod.js",
+    "minhaoi": "mocha minhaoi-complex.js"
   },
   "dependencies": {
     "selenium-webdriver": "^3.0.0-beta-3",
