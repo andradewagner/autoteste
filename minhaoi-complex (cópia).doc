@@ -126,6 +126,7 @@ describe("android complex", function () {
         return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click();
       });
     })
+    //.elementById('br.com.mobicare.minhaoi:id/mop_balance_mcmsbtn_inside').click()
     .then(function() {
       return driver.elementByXPath('//android.widget.TextView[@text=\'SMS\']').click().then(function() {
         return Q.delay(5000).then(function() {

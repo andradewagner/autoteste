@@ -52,16 +52,6 @@ describe("Oi Mod", function () {
     allPassed = allPassed && this.currentTest.state === 'passed';
   });
 
-  // it("Migrar para Oi Mod", function() {
-  //   return driver.sleep(5000)
-  //   .takeScreenshot().then(function(image){
-  //     fs.writeFile('./oimod/home.png', image, 'base64', function(callback){
-  //
-  //     })
-  //   });
-  //   console.log(driver.elementByXPath('//android.widget.TextView[@text=\'Iniciar processo de migração\']'));
-  // });
-
   it("Login pré", function () {
     return driver.sleep(5000)
       .takeScreenshot().then(function(image){
@@ -87,7 +77,7 @@ describe("Oi Mod", function () {
 
         })
       })
-      .elementById('usernameinput').sendKeys('testeoimod@gmail.com')
+      .elementById('usernameinput').sendKeys('testeoimod+c10@gmail.com')
       .hideKeyboard()
       .elementById('passwordinput').sendKeys('Testes123')
       .hideKeyboard()
