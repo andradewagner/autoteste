@@ -1,5 +1,6 @@
 #!/bin/bash
 
-cd ~/Documentos/Projetos/sample-code/sample-code/examples/node
+#cd /home/wagner/Documentos/Projetos/sample-code/sample-code/examples/node
 #ls > /tmp/tmp.txt
-/home/wagner/Programas/node/bin/npm run android-complex
+npm install
+npm run android-complex
