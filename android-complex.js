@@ -19,13 +19,28 @@ var hoje = Date.now();
 var massa = "21-988911758";
 const _DIR_ = "/home/wagner/Documentos/Projetos/mean/modules/testes/client/images/";
 
-var teste = new AutoTeste("App Minha Oi", "3.0", Date.now(), massa, "Pré/Controle");
-teste.cenarios.push({cenario: "Access Token", imagem: "01.png", status: null, duracao: ''});
-teste.cenarios.push({cenario: "Troca voz-internet", imagem: "02.png", status: null, duracao: ''});
-teste.cenarios.push({cenario: "Comprar pacotes", imagem: "03.png", status: null, duracao: ''});
-teste.cenarios.push({cenario: "Home :: Recarga", imagem: "04.png", status: null, duracao: ''});
-teste.cenarios.push({cenario: "Menu Navegação :: Trocar oferta", imagem: "05.png", status: null, duracao: ''});
-teste.cenarios.push({cenario: "Menu Navegação :: Entenda sua oferta", imagem: "06.png", status: null, duracao: ''});
+var CenariosEnum = {
+  TOKEN: "Access Token",
+  TROCA_DADOS: "Trocar Voz/Internet",
+  PACOTES_SMS: "Comprar pacotes sms",
+  PACOTES_VOZ: "Comprar pacotes voz",
+  PACOTES_INTERNET: "Comprar pacotes internet",
+  PACOTES_MIX: "Comprar pacotes mix",
+  RECARGA: "Home :: Recarga",
+  MUDA_OFERTA: "Menu Navegação :: Mudar sua oferta",
+  ENTENDA_OFERTA: "Menu Navegação :: Entenda a sua oferta"
+};
+
+var teste = new AutoTeste("Pré-pago - App Minha Oi", "3.0", Date.now(), massa, "Pré-Pago/Controle");
+teste.cenarios.push({cenario: CenariosEnum.TOKEN, imagem: "01.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.TROCA_DADOS, imagem: "02.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_SMS, imagem: "03.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_VOZ, imagem: "04.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_INTERNET, imagem: "05.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_MIX, imagem: "06.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.RECARGA, imagem: "07.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.MUDA_OFERTA, imagem: "08.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.ENTENDA_OFERTA, imagem: "09.png", status: null, duracao: '', erro: ''});
 
 registrarTeste(teste, function(data) {
   teste = data;
@@ -54,7 +69,7 @@ describe("android complex", function () {
     }
     return driver
       .init(desired)
-      .setImplicitWaitTimeout(5000);
+      .setImplicitWaitTimeout(60000);
   });
 
   after(function () {
@@ -73,196 +88,174 @@ describe("android complex", function () {
       teste.cenarios[index].status = true;
     } else {
       teste.cenarios[index].status = false;
+      salvarScreenShot(driver, this.currentTest.title);
     }
     allPassed = allPassed && this.currentTest.state === 'passed';
     teste.cenarios[index].duracao = this.currentTest.duration;
+    if(this.currentTest.err) {
+      teste.cenarios[index].erro = this.currentTest.err.message;
+    }
     teste.statusGeral = allPassed;
     calcularTempoTotal(teste.cenarios[index].duracao);
     atualizarTeste(teste);
   });
 
-  it("Access Token", function () {
+  it(CenariosEnum.TOKEN, function () {
     return driver
-      .waitForElementById('br.com.mobicare.minhaoi:id/minhaoi_hub_bottom_btn')
+      .waitForElementById('br.com.mobicare.minhaoi:id/minhaoi_hub_bottom_btn', 60)
       .elementById('br.com.mobicare.minhaoi:id/minhaoi_hub_bottom_btn').click()
       .elementById('br.com.mobicare.minhaoi:id/mop_login_ddd_edittext').sendKeys('21')
       .elementById('br.com.mobicare.minhaoi:id/mop_login_phone_edittext').sendKeys('988911758')
-      .elementById('br.com.mobicare.minhaoi:id/mop_login_signin_btn').click().sleep(10000)
-      .elementById('br.com.mobicare.minhaoi:id/mop_benefits_refresh_date').then(function(el) {
-          return el.text().should.become('Informações atualizadas: Agora mesmo').then(function() {
-            salvarScreenShot(driver, "01");
-          });
+      .elementById('br.com.mobicare.minhaoi:id/mop_login_signin_btn').click()
+      .waitForElementByXPath('//android.widget.TextView[@text=\'Minha Oi\']')
+      .then(function(result) {
+        return result.text().should.become('Minha Oi');
       });
   });
 
-  it("Troca voz-internet", function () {
-    // return driver.waitForElementById('br.com.mobicare.minhaoi:id/drawer_layout').then(function () {
-    //   return Q.delay(5000).then(function() {
-    //     if(driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn')) {
-    //       return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn').click().then(function() {
-    //         return Q.delay(5000).then(function() {
-    //           if(driver.elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultNegative')) {
-    //             salvarScreenShot(driver, "nao_ha_beneficio_disponivel_" + hoje.getDate() + "_" + hoje.getMonth() + "_" + hoje.getFullYear() + ".png");
-    //             return driver.sleep(5000).elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultNegative').click();
-    //           }
-    //         });
-    //       });
-    //     } else {
-          return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_exchange_btn_inside').click().then(function() {
-            salvarScreenShot(driver, "02");
-            return Q.delay(5000).then(function() {
-              function findSlideBar() {
-                return driver
-                  .elementsByClassName('android.widget.SeekBar')
-                  .then(function (els) {
-                    return Q.all([
-                      els[els.length - 1].getLocation(),
-                      els[0].getLocation()
-                    ]).then(function (locs) {
-                      return driver.swipe({
-                        startX: locs[0].x, startY: locs[0].y,
-                        endX: locs[1].x, endY: locs[1].y,
-                        duration: 800
-                      });
-                    });
-                  }).elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
-                  .catch(function () {
-                    return findSlideBar();
-                  });
-              }
-
+  it(CenariosEnum.TROCA_DADOS, function () {
+    return driver.waitForElementById('br.com.mobicare.minhaoi:id/drawer_layout', 60)
+      .elementByXPath('//android.widget.Button[@text=\'Trocar voz/internet\']').click()
+        .elementByXPath('//android.widget.TextView').then(function(element) {
+            return element.text().should.become('Trocar voz e internet');
+          }).then(function() {
+            function findSlideBar() {
               return driver
-                .elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
-                .then(findSlideBar)
-                .click()
-                .sleep(1000)
-                .then(function () {
-
-                })
-                .elementById('br.com.mobicare.minhaoi:id/mop_exchange_reset_btn').click()
-                .back();
-            });
-          });
-    //     }
-    //   });
-    // });
-  });
-
-  it("Comprar pacotes", function() {
-    return driver.elementByXPath('//android.widget.ImageButton').click()
-
-    //.elementById('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
-    //.then(function () {
-    //   return Q.delay(5000).then(function() {
-    //     if(driver.elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultPositive')) {
-    //       salvarScreenShot(driver, "compra_pacote_sem_saldo_" + hoje.getDate() + "_" + hoje.getMonth() + "_" + hoje.getFullYear() + ".png");
-    //       return driver.elementById('br.com.mobicare.minhaoi:id/md_buttonDefaultPositive').click();
-    //     } else {
-          .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
-          .waitForElementById('br.com.mobicare.minhaoi:id/txt_description')
-            .then(function() {
-              salvarScreenShot(driver, "03");
-              return driver.elementByXPath('//android.widget.TextView[@text=\'SMS\']').click().then(function() {
-                return Q.delay(5000).then(function() {
-                  return driver.elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
-                  .sleep(5000)
-                  .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click()
-                  .back();
+                .elementsByClassName('android.widget.SeekBar')
+                .then(function (els) {
+                  return Q.all([
+                    els[els.length - 1].getLocation(),
+                    els[0].getLocation()
+                  ]).then(function (locs) {
+                    return driver.swipe({
+                      startX: locs[0].x, startY: locs[0].y,
+                      endX: locs[1].x, endY: locs[1].y,
+                      duration: 800
+                    });
+                  });
+                }).elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
+                .catch(function () {
+                  return findSlideBar();
                 });
-              });
-            })
-            .then(function() {
-              return Q.delay(5000).then(function() {
-                return driver.elementByXPath('//android.widget.TextView[@text=\'VOZ\']').click()
-                .sleep(5000)
-                .elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
-                .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click().back();
-              });
-            })
-            .then(function() {
-              return Q.delay(5000).then(function() {
-                return driver.elementByXPath('//android.widget.TextView[@text=\'INTERNET\']').click()
-                .sleep(5000)
-                .elementByXPath('//android.widget.TextView[@text=\'Pacotes Extras\']').click()
-                .elementByXPath('//android.widget.TextView[@text=\'Pacotes de Internet\']').click().back();
-              });
-            })
-            .then(function() {
-              return Q.delay(5000).then(function() {
-                return driver.elementByXPath('//android.widget.TextView[@text=\'MIX\']').click()
-                .sleep(5000)
-                .back().back();
-              });
-            });
-        // }
-    //   });
-    //})
+            }
+            return driver
+              .elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
+              .then(findSlideBar)
+              .click()
+              .sleep(1000)
+              .elementById('br.com.mobicare.minhaoi:id/mop_exchange_reset_btn').click()
+              .back();
+          });
   });
 
-  it("Home :: Recarga", function() {
+  it(CenariosEnum.PACOTES_SMS, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+      .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
+      .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes\']', 60)
+      .then(function(element) {
+        return element.text().should.become('Pacotes');
+      }).then(function() {
+        return driver.elementByXPath('//android.widget.TextView[@text=\'SMS\']').click()
+          .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes de SMS\']', 60)
+          .then(function(result) {
+            return result.text().should.become('Pacotes de SMS');
+          }).then(function() {
+            return driver.elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
+            .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click()
+            .back().back();
+          });
+      });
+  });
+
+  it(CenariosEnum.PACOTES_VOZ, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+      .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
+      .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes\']', 60)
+      .then(function(result) {
+        return result.text().should.become('Pacotes');
+      }).then(function() {
+        return driver.elementByXPath('//android.widget.TextView[@text=\'VOZ\']').click()
+          .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes de VOZ\']', 60)
+          .then(function(result) {
+            return result.text().should.become('Pacotes de VOZ');
+          }).then(function(){
+            return driver.elementByXPath('//android.widget.TextView[@text=\'Pacotes Avulsos\']').click()
+            .elementByXPath('//android.widget.TextView[@text=\'Pacotes Recorrentes\']').click()
+            .back().back();
+          });
+      });
+  });
+
+  it(CenariosEnum.PACOTES_INTERNET, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+      .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
+      .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes\']', 60)
+      .then(function(result) {
+        return result.text().should.become('Pacotes');
+      }).then(function() {
+        return driver.elementByXPath('//android.widget.TextView[@text=\'INTERNET\']').click()
+          .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes de INTERNET\']', 60)
+          .then(function(result) {
+            return result.text().should.become('Pacotes de INTERNET');
+          }).then(function() {
+            return driver.elementByXPath('//android.widget.TextView[@text=\'Pacotes Extras\']').click()
+            .elementByXPath('//android.widget.TextView[@text=\'Pacotes de Internet\']').click()
+            .back().back();
+          });
+      });
+  });
+
+  it(CenariosEnum.PACOTES_MIX, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+      .elementByXPath('//android.widget.CheckedTextView[@text=\'Comprar pacotes\']').click()
+      .waitForElementByXPath('//android.widget.TextView[@text=\'Pacotes\']', 60)
+      .then(function(element) {
+        return element.text().should.become('Pacotes');
+      }).then(function() {
+        return driver.elementByXPath('//android.widget.TextView[@text=\'MIX\']').click()
+          .waitForElementByXPath('//android.widget.TextView[@text=\'MIX\']', 60)
+          .then(function(element) {
+            return element.text().should.become('MIX');
+          }).then(function() {
+            return driver.elementByXPath('//android.widget.TextView[@text=\'MIX\']').click()
+            .back().back();
+          });
+      });
+  });
+
+  it(CenariosEnum.RECARGA, function() {
     return driver.elementByXPath('//android.widget.TextView[@text=\'RECARGA\']').click()
-    .then(function() {
-      return Q.delay(5000).then(function() {
-        salvarScreenShot(driver, "04");
-        return driver.elementById('br.com.mobicare.minhaoi:id/mop_balance_recharge_btn').click().then(function() {
-          return Q.delay(7000).then(function() {
-            salvarScreenShot(driver, 'escolher_valor_recarga');
-          });
-        });
-      });
+    .elementById('br.com.mobicare.minhaoi:id/mop_balance_recharge_btn').click()
+    .waitForElementByXPath('//android.widget.TextView[@text=\'Recarga\']', 60)
+    .then(function(el) {
+      return el.text().should.become('Recarga');
     }).then(function() {
-      return driver.elementByXPath('//android.widget.TextView[@text=\'R$ 14\']').click().then(function() {
-        return Q.delay(5000).then(function() {
-          return driver.back().back();
-        });
-      });
+      return driver.elementByXPath('//android.widget.TextView[@text=\'R$ 14\']').click()
+      .back().back();
     });
   });
 
-  it("Menu Navegação :: Trocar oferta", function() {
-    return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
-      salvarScreenShot(driver, "05");
-      return Q.delay(5000).then(function() {});
+  it(CenariosEnum.MUDA_OFERTA, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+    .elementByXPath('//android.widget.CheckedTextView[@text=\'Mudar sua oferta\']').click()
+    .waitForElementByXPath('//android.widget.TextView[@text=\'Ofertas com troca de voz/internet\']', 60)
+    .then(function(el) {
+      return el.text().should.become('Ofertas com troca de voz/internet');
     }).then(function() {
-      return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Mudar sua oferta\']').click().then(function() {
-        return Q.delay(5000).then(function() {});
-      });
-    }).then(function() {
-      return driver.elementByXPath('//android.widget.TextView[@text=\'CONTROLE\']').click().then(function() {
-        return Q.delay(5000).then(function() {});
-      });
-    }).then(function() {
-      return driver.elementByXPath('//android.widget.TextView[@text=\'PRÉ-PAGO\']').click().then(function() {
-        return Q.delay(2000).then(function() {
-          return driver.back();
-        });
-      });
+      return driver.elementByXPath('//android.widget.TextView[@text=\'CONTROLE\']').click()
+      .elementByXPath('//android.widget.TextView[@text=\'PRÉ-PAGO\']').click()
+      .back();
     });
   });
 
-  it("Menu Navegação :: Entenda sua oferta", function(done) {
-    return driver.elementByXPath('//android.widget.ImageButton').click().then(function() {
-      salvarScreenShot(driver, "06");
-      return Q.delay(5000).then(function() {
-        return driver.elementByXPath('//android.widget.CheckedTextView[@text=\'Entenda a sua oferta\']').click().then(function() {
-
-          var rp = new Promise(function(resolve, reject) {
-            driver.elementById('br.com.mobicare.minhaoi:id/toolbar_title').resolve;
-            resolve(driver.elementById('br.com.mobicare.minhaoi:id/toolbar_title').text());
-          });
-          rp.then((result) => {
-
-            done();
-          });
-
-          return Q.delay(5000).then(function() {
-            //salvarScreenShot(driver, 'entenda_sua_oferta');
-            teste.verificarStatusGeral();
-            registrarTeste(teste);
-            return driver.back().back();
-          });
-        });
-      });
+  it(CenariosEnum.ENTENDA_OFERTA, function() {
+    return driver.elementByXPath('//android.widget.ImageButton').click()
+    .elementByXPath('//android.widget.CheckedTextView[@text=\'Entenda a sua oferta\']').click()
+    .waitForElementByXPath('//android.widget.TextView[@text=\'Regras da Oferta\']')
+    .then(function(el) {
+      return el.text().should.become('Regras da Oferta');
+    }).then(function() {
+      return driver.back();
     });
   });
 });

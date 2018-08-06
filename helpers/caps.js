@@ -21,6 +21,7 @@ exports.android18 = {
   'appium-version': '1.6',
   platformName: 'Android',
   platformVersion: '6.0',
+  udid: '85Q4CQNZYH9LAAKJ',
   deviceName: 'Android Emulator',
   autoGrantPermissions: 'true',
   app: undefined
@@ -31,6 +32,7 @@ exports.android19 = {
   'appium-version': '1.6',
   platformName: 'Android',
   platformVersion: '6.0',
+  udid: '0430682781',
   autoGrantPermissions: 'true',
   deviceName: 'Android Emulator',
   app: undefined
