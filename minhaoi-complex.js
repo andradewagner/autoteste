@@ -18,9 +18,14 @@ var hoje = Date.now();
 var massa = "01102480746";
 const _DIR_ = "/home/wagner/Documentos/Projetos/mean/modules/testes/client/images/";
 
+var CenariosEnum = {
+  TELA_CPF: "Access Token",
+  TERMINAL: "Trocar Voz/Internet"
+};
+
 var teste = new AutoTeste("Acesso Rápido - App Minha Oi", "3.0", Date.now(), massa, "Acesso Rápido");
-teste.cenarios.push({cenario: "Tela cpf", imagem: "01.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: "Selecionar terminal", imagem: "02.png", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.TELA_CPF, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.TERMINAL, imagem: "", status: null, duracao: '', erro: ''});
 
  registrarTeste(teste, function(data) {
    teste = data;
@@ -68,6 +73,8 @@ describe("android complex", function () {
       teste.cenarios[index].status = true;
     } else {
       teste.cenarios[index].status = false;
+      salvarScreenShot(driver, this.currentTest.title);
+      teste.cenarios[index].imagem = this.currentTest.title + ".png";
     }
     allPassed = allPassed && this.currentTest.state === 'passed';
     teste.cenarios[index].duracao = this.currentTest.duration;
@@ -79,7 +86,7 @@ describe("android complex", function () {
     atualizarTeste(teste);
   });
 
-  it("Tela cpf", function () {
+  it(CenariosEnum.TELA_CPF, function () {
     return driver
       .waitForElementById('br.com.mobicare.minhaoi:id/minhaoi_hub_top_btn')
       .elementById('br.com.mobicare.minhaoi:id/minhaoi_hub_top_btn').click()
@@ -91,18 +98,13 @@ describe("android complex", function () {
         if (!process.env.npm_package_config_sauce) {
           return el.text().should.become('Ou se preferir, acesse a Minha Oi:');
         }
-      }).then(function() {
-        salvarScreenShot(driver, '01');
       });
   });
 
-  it("Selecionar terminal", function () {
+  it(CenariosEnum.TERMINAL, function () {
     return driver
     .elementById('br.com.mobicare.minhaoi:id/moi_quick_access_barcode_spinner_container').click()
-    .elementByXPath('//android.widget.LinearLayout[@index=2]').click()
-    .then(function() {
-      salvarScreenShot(driver, '02');
-    });
+    .elementByXPath('//android.widget.LinearLayout[@index=2]').click();
   });
 
 });

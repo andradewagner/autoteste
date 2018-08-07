@@ -43,10 +43,12 @@
     "selendroid-simple": "mocha selendroid-simple.js",
     "minhaoipos": "mocha minhaoipos.js",
     "oimod": "mocha oimod.js",
-    "minhaoi": "mocha minhaoi-complex.js"
+    "minhaoi": "mocha minhaoi-complex.js",
+    "minhaoi300": "mocha -b minha_oi_3_0_0.js"
   },
   "dependencies": {
     "chai-http": "^4.0.0",
+    "nodemailer": "^4.6.7",
     "r2": "^2.0.1",
     "request": "^2.87.0",
     "selenium-webdriver": "^3.0.0-beta-3",
