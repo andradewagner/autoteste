@@ -4,6 +4,7 @@ require("./helpers/setup");
 var assert = require('assert');
 var util = require("./helpers/utils.js");
 const AutoTeste = require('./teste.model');
+var EnviarEmail = require('./helpers/mailer');
 
 var wd = require("wd"),
     _ = require('underscore'),
@@ -31,7 +32,7 @@ var CenariosEnum = {
   ENTENDA_OFERTA: "Menu Navegação :: Entenda a sua oferta"
 };
 
-var teste = new AutoTeste("Pré-pago - App Minha Oi", "3.0.0", Date.now(), massa, "Pré-Pago/Controle");
+var teste = new AutoTeste("Pré-pago - App Minha Oi", "2.7.3", Date.now(), massa, "Pré-Pago/Controle");
 teste.cenarios.push({cenario: CenariosEnum.TOKEN, imagem: "", status: null, duracao: '', erro: ''});
 teste.cenarios.push({cenario: CenariosEnum.TROCA_DADOS, imagem: "", status: null, duracao: '', erro: ''});
 teste.cenarios.push({cenario: CenariosEnum.PACOTES_SMS, imagem: "", status: null, duracao: '', erro: ''});
@@ -83,6 +84,7 @@ describe("android complex", function () {
   });
 
   afterEach(function () {
+    new EnviarEmail(teste, this.currentTest.title);
     var index = indiceCenario(this.currentTest.title);
     if(this.currentTest.state === 'passed') {
       teste.cenarios[index].status = true;
@@ -90,12 +92,12 @@ describe("android complex", function () {
       teste.cenarios[index].status = false;
       salvarScreenShot(driver, this.currentTest.title);
       teste.cenarios[index].imagem = this.currentTest.title + ".png";
+      teste.cenarios[index].erro = this.currentTest.err.message;
+      new EnviarEmail(teste, this.currentTest.title);
     }
     allPassed = allPassed && this.currentTest.state === 'passed';
     teste.cenarios[index].duracao = this.currentTest.duration;
-    if(this.currentTest.err) {
-      teste.cenarios[index].erro = this.currentTest.err.message;
-    }
+
     teste.statusGeral = allPassed;
     calcularTempoTotal(teste.cenarios[index].duracao);
     atualizarTeste(teste);
@@ -109,48 +111,18 @@ describe("android complex", function () {
       .elementById('br.com.mobicare.minhaoi:id/mop_login_phone_edittext').sendKeys('988911758')
       .elementById('br.com.mobicare.minhaoi:id/mop_login_signin_btn').click()
       .waitForElementByXPath('//android.widget.TextView[@text=\'Minha Oi\']')
-      .then(function(element) {
-        return element.text().should.become('Minha Oi');
-      }).then(function() {
-        if(driver.elementById('br.com.mobicare.minhaoi:id/onboarding_mop_home_title')) {
-          return driver.elementByXPath('//android.widget.Button[@text=\'Fechar\']').click();
-        }
+      .then(function(result) {
+        return result.text().should.become('Minha Oi');
       });
   });
 
   it(CenariosEnum.TROCA_DADOS, function () {
-    return driver.waitForElementById('br.com.mobicare.minhaoi:id/drawer_layout', 60)
-      .elementByXPath('//android.widget.Button[@text=\'Trocar voz/internet\']').click()
+    return driver.elementByXPath('//android.widget.TextView[@text=\'TROCAR VOZ E INTERNET\']').click()
         .elementByXPath('//android.widget.TextView').then(function(element) {
-            return element.text().should.become('Trocar voz e internet');
+            return element.text().should.become('Atenção');
           }).then(function() {
-            function findSlideBar() {
-              return driver
-                .elementsByClassName('android.widget.SeekBar')
-                .then(function (els) {
-                  return Q.all([
-                    els[els.length - 1].getLocation(),
-                    els[0].getLocation()
-                  ]).then(function (locs) {
-                    return driver.swipe({
-                      startX: locs[0].x, startY: locs[0].y,
-                      endX: locs[1].x, endY: locs[1].y,
-                      duration: 800
-                    });
-                  });
-                }).elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
-                .catch(function () {
-                  return findSlideBar();
-                });
-            }
-            return driver
-              .elementById('br.com.mobicare.minhaoi:id/mop_exchange_seekbar')
-              .then(findSlideBar)
-              .click()
-              .sleep(1000)
-              .elementById('br.com.mobicare.minhaoi:id/mop_exchange_reset_btn').click()
-              .back();
-          });
+            return driver.elementByXPath('//android.widget.TextView[@text=\'OK\']').click();
+          }).sleep(5000);
   });
 
   it(CenariosEnum.PACOTES_SMS, function() {

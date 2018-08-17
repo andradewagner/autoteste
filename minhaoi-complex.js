@@ -3,7 +3,8 @@
 require("./helpers/setup");
 
 var util = require("./helpers/utils.js");
-const AutoTeste = require('./teste.model');
+const AutoTeste = require('./teste.model'),
+      EnviarEmail = require('./helpers/mailer');
 
 var wd = require("wd"),
     _ = require('underscore'),
@@ -75,6 +76,7 @@ describe("android complex", function () {
       teste.cenarios[index].status = false;
       salvarScreenShot(driver, this.currentTest.title);
       teste.cenarios[index].imagem = this.currentTest.title + ".png";
+      new EnviarEmail(teste);
     }
     allPassed = allPassed && this.currentTest.state === 'passed';
     teste.cenarios[index].duracao = this.currentTest.duration;

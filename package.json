@@ -37,14 +37,15 @@
     "ios-selenium-webdriver-bridge": "mocha ios-selenium-webdriver-bridge.js",
     "ios-yiewd": "mocha --harmony ios-yiewd.js",
     "android-simple": "mocha android-simple.js",
-    "android-complex": "mocha android-complex.js",
     "android-webview": "mocha android-webview.js",
     "android-local-server": "mocha android-local-server.js",
     "selendroid-simple": "mocha selendroid-simple.js",
-    "minhaoipos": "mocha minhaoipos.js",
-    "oimod": "mocha oimod.js",
-    "minhaoi": "mocha minhaoi-complex.js",
-    "minhaoi300": "mocha -b minha_oi_3_0_0.js"
+    "minhaoipos": "mocha -b minhaoipos.js",
+    "oimod": "mocha -b oimod.js",
+    "minhaoi": "mocha -b minhaoi-complex.js",
+    "minhaoi273saldo": "mocha -b minha_oi_2-7-3_saldo.js",
+    "minhaoi273": "mocha -b minha_oi_2-7-3.js",
+    "minhaoi300saldo": "mocha -b minha_oi_3-0-0_saldo.js"
   },
   "dependencies": {
     "chai-http": "^4.0.0",

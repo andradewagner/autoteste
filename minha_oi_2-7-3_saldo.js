@@ -4,6 +4,7 @@ require("./helpers/setup");
 var assert = require('assert');
 var util = require("./helpers/utils.js");
 const AutoTeste = require('./teste.model');
+var EnviarEmail = require('./helpers/mailer');
 
 var wd = require("wd"),
     _ = require('underscore'),
@@ -31,16 +32,16 @@ var CenariosEnum = {
   ENTENDA_OFERTA: "Menu Navegação :: Entenda a sua oferta"
 };
 
-var teste = new AutoTeste("Pré-pago - App Minha Oi", "3.0", Date.now(), massa, "Pré-Pago/Controle");
-teste.cenarios.push({cenario: CenariosEnum.TOKEN, imagem: "01.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.TROCA_DADOS, imagem: "02.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.PACOTES_SMS, imagem: "03.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.PACOTES_VOZ, imagem: "04.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.PACOTES_INTERNET, imagem: "05.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.PACOTES_MIX, imagem: "06.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.RECARGA, imagem: "07.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.MUDA_OFERTA, imagem: "08.png", status: null, duracao: '', erro: ''});
-teste.cenarios.push({cenario: CenariosEnum.ENTENDA_OFERTA, imagem: "09.png", status: null, duracao: '', erro: ''});
+var teste = new AutoTeste("Pré-pago - App Minha Oi", "2.7.3", Date.now(), massa, "Pré-Pago/Controle");
+teste.cenarios.push({cenario: CenariosEnum.TOKEN, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.TROCA_DADOS, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_SMS, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_VOZ, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_INTERNET, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.PACOTES_MIX, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.RECARGA, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.MUDA_OFERTA, imagem: "", status: null, duracao: '', erro: ''});
+teste.cenarios.push({cenario: CenariosEnum.ENTENDA_OFERTA, imagem: "", status: null, duracao: '', erro: ''});
 
 registrarTeste(teste, function(data) {
   teste = data;
@@ -83,18 +84,20 @@ describe("android complex", function () {
   });
 
   afterEach(function () {
+    new EnviarEmail(teste, this.currentTest.title);
     var index = indiceCenario(this.currentTest.title);
     if(this.currentTest.state === 'passed') {
       teste.cenarios[index].status = true;
     } else {
       teste.cenarios[index].status = false;
       salvarScreenShot(driver, this.currentTest.title);
+      teste.cenarios[index].imagem = this.currentTest.title + ".png";
+      teste.cenarios[index].erro = this.currentTest.err.message;
+      new EnviarEmail(teste, this.currentTest.title);
     }
     allPassed = allPassed && this.currentTest.state === 'passed';
     teste.cenarios[index].duracao = this.currentTest.duration;
-    if(this.currentTest.err) {
-      teste.cenarios[index].erro = this.currentTest.err.message;
-    }
+
     teste.statusGeral = allPassed;
     calcularTempoTotal(teste.cenarios[index].duracao);
     atualizarTeste(teste);
